@@ -10,7 +10,7 @@
     "postgenerate": "npm run pretty",
     "load:meta": "npm run load:meta:basilisk && npm run load:meta:hydradx",
     "load:meta:basilisk": "node --experimental-specifier-resolution=node --loader ts-node/esm ./scripts/metadata.mjs --ws wss://rpc.basilisk.cloud --chain basilisk",
-    "load:meta:hydradx": "node --experimental-specifier-resolution=node --loader ts-node/esm ./scripts/metadata.mjs --ws wss://rpc.nice.hydration.cloud --chain hydradx",
+    "load:meta:hydradx": "node --experimental-specifier-resolution=node --loader ts-node/esm ./scripts/metadata.mjs --ws wss://rpc.hydradx.cloud --chain hydradx",
     "generate:defs": "npm run generate:defs:basilisk && npm run generate:defs:hydradx",
     "generate:defs:basilisk": "node --experimental-specifier-resolution=node --loader ts-node/esm  node_modules/.bin/polkadot-types-from-defs --package @galacticcouncil/api-augment/basilisk/interfaces --input ./src/basilisk/interfaces --endpoint ./src/basilisk/metadata.json",
     "generate:defs:hydradx": "node --experimental-specifier-resolution=node --loader ts-node/esm  node_modules/.bin/polkadot-types-from-defs --package @galacticcouncil/api-augment/hydradx/interfaces --input ./src/hydradx/interfaces --endpoint  ./src/hydradx/metadata.json",
@@ -54,8 +54,8 @@
     "api"
   ],
   "devDependencies": {
-    "@polkadot/api": "^14.2.3",
-    "@polkadot/typegen": "^14.2.3",
+    "@polkadot/api": "^15.4.1",
+    "@polkadot/typegen": "^15.4.1",
     "prettier": "^2.7.1",
     "prettier-plugin-jsdoc": "^0.3.38",
     "rimraf": "^3.0.2",
@@ -64,17 +64,17 @@
     "websocket": "^1.0.34"
   },
   "overrides": {
-    "@polkadot/api": "^14.2.3",
-    "@polkadot/api-augment": "14.2.3",
-    "@polkadot/api-derive": "14.2.3",
-    "@polkadot/api-base": "14.2.3",
-    "@polkadot/rpc-augment": "14.2.3",
-    "@polkadot/rpc-core": "14.2.3",
-    "@polkadot/rpc-provider": "14.2.3",
-    "@polkadot/types": "14.2.3",
-    "@polkadot/types-augment": "14.2.3",
-    "@polkadot/types-codec": "14.2.3",
-    "@polkadot/types-create": "14.2.3",
-    "@polkadot/types-known": "14.2.3"
+    "@polkadot/api": "^15.4.1",
+    "@polkadot/api-augment": "15.4.1",
+    "@polkadot/api-derive": "15.4.1",
+    "@polkadot/api-base": "15.4.1",
+    "@polkadot/rpc-augment": "15.4.1",
+    "@polkadot/rpc-core": "15.4.1",
+    "@polkadot/rpc-provider": "15.4.1",
+    "@polkadot/types": "15.4.1",
+    "@polkadot/types-augment": "15.4.1",
+    "@polkadot/types-codec": "15.4.1",
+    "@polkadot/types-create": "15.4.1",
+    "@polkadot/types-known": "15.4.1"
   }
 }
