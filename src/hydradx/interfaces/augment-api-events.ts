@@ -9,7 +9,7 @@ import type { ApiTypes, AugmentedEvent } from '@polkadot/api-base/types';
 import type { Bytes, Null, Option, Result, U8aFixed, Vec, bool, i128, u128, u16, u32, u64, u8 } from '@polkadot/types-codec';
 import type { ITuple } from '@polkadot/types-codec/types';
 import type { AccountId32, H160, H256, Permill, Perquintill } from '@polkadot/types/interfaces/runtime';
-import type { CumulusPrimitivesCoreAggregateMessageOrigin, EthereumLog, EvmCoreErrorExitReason, FrameSupportDispatchDispatchInfo, FrameSupportDispatchPostDispatchInfo, FrameSupportMessagesProcessMessageError, FrameSupportPreimagesBounded, FrameSupportTokensMiscBalanceStatus, HydradxRuntimeSystemProxyType, HydradxRuntimeXcmAssetLocation, OrmlVestingVestingSchedule, PalletAssetRegistryAssetType, PalletClaimsEthereumAddress, PalletConvictionVotingTally, PalletDcaOrder, PalletDemocracyMetadataOwner, PalletDemocracyVoteAccountVote, PalletDemocracyVoteThreshold, PalletLbpPool, PalletLiquidityMiningLoyaltyCurve, PalletMultisigTimepoint, PalletOmnipoolTradability, PalletReferralsAssetAmount, PalletReferralsFeeDistribution, PalletReferralsLevel, PalletStableswapAssetAmount, PalletStableswapTradability, PalletStateTrieMigrationError, PalletStateTrieMigrationMigrationCompute, PalletXykAssetPair, SpRuntimeDispatchError, SpRuntimeDispatchErrorWithPostInfo, SpWeightsWeightV2Weight, StagingXcmV4Asset, StagingXcmV4AssetAssets, StagingXcmV4Location, StagingXcmV4Response, StagingXcmV4TraitsOutcome, StagingXcmV4Xcm, XcmV3TraitsError, XcmVersionedAssets, XcmVersionedLocation } from '@polkadot/types/lookup';
+import type { CumulusPrimitivesCoreAggregateMessageOrigin, EthereumLog, EvmCoreErrorExitReason, FrameSupportDispatchDispatchInfo, FrameSupportDispatchPostDispatchInfo, FrameSupportMessagesProcessMessageError, FrameSupportPreimagesBounded, FrameSupportTokensMiscBalanceStatus, HydradxRuntimeSystemProxyType, HydradxRuntimeXcmAssetLocation, HydradxTraitsStableswapAssetAmount, OrmlVestingVestingSchedule, PalletAssetRegistryAssetType, PalletBroadcastAsset, PalletBroadcastExecutionType, PalletBroadcastFee, PalletBroadcastFiller, PalletBroadcastTradeOperation, PalletClaimsEthereumAddress, PalletConvictionVotingTally, PalletConvictionVotingVoteAccountVote, PalletDcaOrder, PalletDemocracyMetadataOwner, PalletDemocracyVoteAccountVote, PalletDemocracyVoteThreshold, PalletLbpPool, PalletLiquidityMiningLoyaltyCurve, PalletMultisigTimepoint, PalletOmnipoolTradability, PalletReferralsAssetAmount, PalletReferralsFeeDistribution, PalletReferralsLevel, PalletStableswapTradability, PalletStateTrieMigrationError, PalletStateTrieMigrationMigrationCompute, PalletXykAssetPair, SpRuntimeDispatchError, SpRuntimeDispatchErrorWithPostInfo, SpWeightsWeightV2Weight, StagingXcmV4Asset, StagingXcmV4AssetAssets, StagingXcmV4Location, StagingXcmV4Response, StagingXcmV4TraitsOutcome, StagingXcmV4Xcm, XcmV3TraitsError, XcmVersionedAssets, XcmVersionedLocation } from '@polkadot/types/lookup';
 
 export type __AugmentedEvent<ApiType extends ApiTypes> = AugmentedEvent<ApiType>;
 
@@ -160,6 +160,16 @@ declare module '@polkadot/api-base/types/events' {
        **/
       [key: string]: AugmentedEvent<ApiType>;
     };
+    broadcast: {
+      /**
+       * Trade executed.
+       **/
+      Swapped: AugmentedEvent<ApiType, [swapper: AccountId32, filler: AccountId32, fillerType: PalletBroadcastFiller, operation: PalletBroadcastTradeOperation, inputs: Vec<PalletBroadcastAsset>, outputs: Vec<PalletBroadcastAsset>, fees: Vec<PalletBroadcastFee>, operationStack: Vec<PalletBroadcastExecutionType>], { swapper: AccountId32, filler: AccountId32, fillerType: PalletBroadcastFiller, operation: PalletBroadcastTradeOperation, inputs: Vec<PalletBroadcastAsset>, outputs: Vec<PalletBroadcastAsset>, fees: Vec<PalletBroadcastFee>, operationStack: Vec<PalletBroadcastExecutionType> }>;
+      /**
+       * Generic event
+       **/
+      [key: string]: AugmentedEvent<ApiType>;
+    };
     circuitBreaker: {
       /**
        * Add liquidity limit of an asset was changed.
@@ -251,6 +261,14 @@ declare module '@polkadot/api-base/types/events' {
        * An \[account\] has cancelled a previous delegation operation.
        **/
       Undelegated: AugmentedEvent<ApiType, [AccountId32]>;
+      /**
+       * An account that has voted
+       **/
+      Voted: AugmentedEvent<ApiType, [who: AccountId32, vote: PalletConvictionVotingVoteAccountVote], { who: AccountId32, vote: PalletConvictionVotingVoteAccountVote }>;
+      /**
+       * A vote that been removed
+       **/
+      VoteRemoved: AugmentedEvent<ApiType, [who: AccountId32, vote: PalletConvictionVotingVoteAccountVote], { who: AccountId32, vote: PalletConvictionVotingVoteAccountVote }>;
       /**
        * Generic event
        **/
@@ -361,6 +379,7 @@ declare module '@polkadot/api-base/types/events' {
        **/
       Terminated: AugmentedEvent<ApiType, [id: u32, who: AccountId32, error: SpRuntimeDispatchError], { id: u32, who: AccountId32, error: SpRuntimeDispatchError }>;
       /**
+       * Deprecated. Use pallet_amm::Event::Swapped instead.
        * The DCA trade is successfully executed
        **/
       TradeExecuted: AugmentedEvent<ApiType, [id: u32, who: AccountId32, amountIn: u128, amountOut: u128], { id: u32, who: AccountId32, amountIn: u128, amountOut: u128 }>;
@@ -442,6 +461,14 @@ declare module '@polkadot/api-base/types/events' {
        * An account has voted in a referendum
        **/
       Voted: AugmentedEvent<ApiType, [voter: AccountId32, refIndex: u32, vote: PalletDemocracyVoteAccountVote], { voter: AccountId32, refIndex: u32, vote: PalletDemocracyVoteAccountVote }>;
+      /**
+       * Generic event
+       **/
+      [key: string]: AugmentedEvent<ApiType>;
+    };
+    dispatcher: {
+      AaveManagerCallDispatched: AugmentedEvent<ApiType, [callHash: H256, result: Result<FrameSupportDispatchPostDispatchInfo, SpRuntimeDispatchErrorWithPostInfo>], { callHash: H256, result: Result<FrameSupportDispatchPostDispatchInfo, SpRuntimeDispatchErrorWithPostInfo> }>;
+      TreasuryManagerCallDispatched: AugmentedEvent<ApiType, [callHash: H256, result: Result<FrameSupportDispatchPostDispatchInfo, SpRuntimeDispatchErrorWithPostInfo>], { callHash: H256, result: Result<FrameSupportDispatchPostDispatchInfo, SpRuntimeDispatchErrorWithPostInfo> }>;
       /**
        * Generic event
        **/
@@ -669,6 +696,7 @@ declare module '@polkadot/api-base/types/events' {
     lbp: {
       /**
        * Purchase executed.
+       * Deprecated. Replaced by pallet_broadcast::Swapped
        **/
       BuyExecuted: AugmentedEvent<ApiType, [who: AccountId32, assetOut: u32, assetIn: u32, amount: u128, buyPrice: u128, feeAsset: u32, feeAmount: u128], { who: AccountId32, assetOut: u32, assetIn: u32, amount: u128, buyPrice: u128, feeAsset: u32, feeAmount: u128 }>;
       /**
@@ -689,6 +717,7 @@ declare module '@polkadot/api-base/types/events' {
       PoolUpdated: AugmentedEvent<ApiType, [pool: AccountId32, data: PalletLbpPool], { pool: AccountId32, data: PalletLbpPool }>;
       /**
        * Sale executed.
+       * Deprecated. Replaced by pallet_broadcast::Swapped
        **/
       SellExecuted: AugmentedEvent<ApiType, [who: AccountId32, assetIn: u32, assetOut: u32, amount: u128, salePrice: u128, feeAsset: u32, feeAmount: u128], { who: AccountId32, assetIn: u32, assetOut: u32, amount: u128, salePrice: u128, feeAsset: u32, feeAmount: u128 }>;
       /**
@@ -787,6 +816,7 @@ declare module '@polkadot/api-base/types/events' {
       AssetWeightCapUpdated: AugmentedEvent<ApiType, [assetId: u32, cap: Permill], { assetId: u32, cap: Permill }>;
       /**
        * Buy trade executed.
+       * Deprecated. Replaced by pallet_broadcast::Swapped
        **/
       BuyExecuted: AugmentedEvent<ApiType, [who: AccountId32, assetIn: u32, assetOut: u32, amountIn: u128, amountOut: u128, hubAmountIn: u128, hubAmountOut: u128, assetFeeAmount: u128, protocolFeeAmount: u128], { who: AccountId32, assetIn: u32, assetOut: u32, amountIn: u128, amountOut: u128, hubAmountIn: u128, hubAmountOut: u128, assetFeeAmount: u128, protocolFeeAmount: u128 }>;
       /**
@@ -815,6 +845,7 @@ declare module '@polkadot/api-base/types/events' {
       ProtocolLiquidityRemoved: AugmentedEvent<ApiType, [who: AccountId32, assetId: u32, amount: u128, hubAmount: u128, sharesRemoved: u128], { who: AccountId32, assetId: u32, amount: u128, hubAmount: u128, sharesRemoved: u128 }>;
       /**
        * Sell trade executed.
+       * Deprecated. Replaced by pallet_broadcast::Swapped
        **/
       SellExecuted: AugmentedEvent<ApiType, [who: AccountId32, assetIn: u32, assetOut: u32, amountIn: u128, amountOut: u128, hubAmountIn: u128, hubAmountOut: u128, assetFeeAmount: u128, protocolFeeAmount: u128], { who: AccountId32, assetIn: u32, assetOut: u32, amountIn: u128, amountOut: u128, hubAmountIn: u128, hubAmountOut: u128, assetFeeAmount: u128, protocolFeeAmount: u128 }>;
       /**
@@ -927,10 +958,12 @@ declare module '@polkadot/api-base/types/events' {
       Cancelled: AugmentedEvent<ApiType, [orderId: u32], { orderId: u32 }>;
       /**
        * An Order has been completely filled
+       * Deprecated. Replaced by pallet_broadcast::Swapped
        **/
       Filled: AugmentedEvent<ApiType, [orderId: u32, who: AccountId32, amountIn: u128, amountOut: u128, fee: u128], { orderId: u32, who: AccountId32, amountIn: u128, amountOut: u128, fee: u128 }>;
       /**
        * An Order has been partially filled
+       * Deprecated. Replaced by pallet_broadcast::Swapped
        **/
       PartiallyFilled: AugmentedEvent<ApiType, [orderId: u32, who: AccountId32, amountIn: u128, amountOut: u128, fee: u128], { orderId: u32, who: AccountId32, amountIn: u128, amountOut: u128, fee: u128 }>;
       /**
@@ -1270,7 +1303,7 @@ declare module '@polkadot/api-base/types/events' {
       /**
        * The route with trades has been successfully executed
        **/
-      Executed: AugmentedEvent<ApiType, [assetIn: u32, assetOut: u32, amountIn: u128, amountOut: u128], { assetIn: u32, assetOut: u32, amountIn: u128, amountOut: u128 }>;
+      Executed: AugmentedEvent<ApiType, [assetIn: u32, assetOut: u32, amountIn: u128, amountOut: u128, eventId: u32], { assetIn: u32, assetOut: u32, amountIn: u128, amountOut: u128, eventId: u32 }>;
       /**
        * The route with trades has been successfully executed
        **/
@@ -1341,6 +1374,7 @@ declare module '@polkadot/api-base/types/events' {
       AmplificationChanging: AugmentedEvent<ApiType, [poolId: u32, currentAmplification: u16, finalAmplification: u16, startBlock: u32, endBlock: u32], { poolId: u32, currentAmplification: u16, finalAmplification: u16, startBlock: u32, endBlock: u32 }>;
       /**
        * Buy trade executed. Trade fee paid in asset entering the pool (already included in amount_in).
+       * Deprecated. Replaced by pallet_broadcast::Swapped
        **/
       BuyExecuted: AugmentedEvent<ApiType, [who: AccountId32, poolId: u32, assetIn: u32, assetOut: u32, amountIn: u128, amountOut: u128, fee: u128], { who: AccountId32, poolId: u32, assetIn: u32, assetOut: u32, amountIn: u128, amountOut: u128, fee: u128 }>;
       /**
@@ -1350,11 +1384,11 @@ declare module '@polkadot/api-base/types/events' {
       /**
        * Liquidity of an asset was added to a pool.
        **/
-      LiquidityAdded: AugmentedEvent<ApiType, [poolId: u32, who: AccountId32, shares: u128, assets: Vec<PalletStableswapAssetAmount>], { poolId: u32, who: AccountId32, shares: u128, assets: Vec<PalletStableswapAssetAmount> }>;
+      LiquidityAdded: AugmentedEvent<ApiType, [poolId: u32, who: AccountId32, shares: u128, assets: Vec<HydradxTraitsStableswapAssetAmount>], { poolId: u32, who: AccountId32, shares: u128, assets: Vec<HydradxTraitsStableswapAssetAmount> }>;
       /**
        * Liquidity removed.
        **/
-      LiquidityRemoved: AugmentedEvent<ApiType, [poolId: u32, who: AccountId32, shares: u128, amounts: Vec<PalletStableswapAssetAmount>, fee: u128], { poolId: u32, who: AccountId32, shares: u128, amounts: Vec<PalletStableswapAssetAmount>, fee: u128 }>;
+      LiquidityRemoved: AugmentedEvent<ApiType, [poolId: u32, who: AccountId32, shares: u128, amounts: Vec<HydradxTraitsStableswapAssetAmount>, fee: u128], { poolId: u32, who: AccountId32, shares: u128, amounts: Vec<HydradxTraitsStableswapAssetAmount>, fee: u128 }>;
       /**
        * A pool was created.
        **/
@@ -1365,6 +1399,7 @@ declare module '@polkadot/api-base/types/events' {
       PoolDestroyed: AugmentedEvent<ApiType, [poolId: u32], { poolId: u32 }>;
       /**
        * Sell trade executed. Trade fee paid in asset leaving the pool (already subtracted from amount_out).
+       * Deprecated. Replaced by pallet_broadcast::Swapped
        **/
       SellExecuted: AugmentedEvent<ApiType, [who: AccountId32, poolId: u32, assetIn: u32, assetOut: u32, amountIn: u128, amountOut: u128, fee: u128], { who: AccountId32, poolId: u32, assetIn: u32, assetOut: u32, amountIn: u128, amountOut: u128, fee: u128 }>;
       /**
@@ -1650,14 +1685,6 @@ declare module '@polkadot/api-base/types/events' {
        **/
       PaymentFailed: AugmentedEvent<ApiType, [index: u32, paymentId: Null], { index: u32, paymentId: Null }>;
       /**
-       * New proposal.
-       **/
-      Proposed: AugmentedEvent<ApiType, [proposalIndex: u32], { proposalIndex: u32 }>;
-      /**
-       * A proposal was rejected; funds were slashed.
-       **/
-      Rejected: AugmentedEvent<ApiType, [proposalIndex: u32, slashed: u128], { proposalIndex: u32, slashed: u128 }>;
-      /**
        * Spending has finished; this is the amount that rolls over until next spend.
        **/
       Rollover: AugmentedEvent<ApiType, [rolloverBalance: u128], { rolloverBalance: u128 }>;
@@ -1894,6 +1921,7 @@ declare module '@polkadot/api-base/types/events' {
     xyk: {
       /**
        * Asset purchase executed.
+       * Deprecated. Replaced by pallet_broadcast::Swapped
        **/
       BuyExecuted: AugmentedEvent<ApiType, [who: AccountId32, assetOut: u32, assetIn: u32, amount: u128, buyPrice: u128, feeAsset: u32, feeAmount: u128, pool: AccountId32], { who: AccountId32, assetOut: u32, assetIn: u32, amount: u128, buyPrice: u128, feeAsset: u32, feeAmount: u128, pool: AccountId32 }>;
       /**
@@ -1914,6 +1942,7 @@ declare module '@polkadot/api-base/types/events' {
       PoolDestroyed: AugmentedEvent<ApiType, [who: AccountId32, assetA: u32, assetB: u32, shareToken: u32, pool: AccountId32], { who: AccountId32, assetA: u32, assetB: u32, shareToken: u32, pool: AccountId32 }>;
       /**
        * Asset sale executed.
+       * Deprecated. Replaced by pallet_broadcast::Swapped
        **/
       SellExecuted: AugmentedEvent<ApiType, [who: AccountId32, assetIn: u32, assetOut: u32, amount: u128, salePrice: u128, feeAsset: u32, feeAmount: u128, pool: AccountId32], { who: AccountId32, assetIn: u32, assetOut: u32, amount: u128, salePrice: u128, feeAsset: u32, feeAmount: u128, pool: AccountId32 }>;
       /**

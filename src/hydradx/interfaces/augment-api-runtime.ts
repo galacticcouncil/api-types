@@ -7,23 +7,26 @@ import '@polkadot/api-base/types/calls';
 
 import type { ApiTypes, AugmentedCall, DecoratedCallBase } from '@polkadot/api-base/types';
 import type { Bytes, Null, Option, Result, U256, Vec, bool, u128, u256, u32, u64 } from '@polkadot/types-codec';
-import type { AnyNumber, ITuple } from '@polkadot/types-codec/types';
+import type { AnyNumber, IMethod, ITuple } from '@polkadot/types-codec/types';
 import type { CheckInherentsResult, InherentData } from '@polkadot/types/interfaces/blockbuilder';
 import type { BlockHash } from '@polkadot/types/interfaces/chain';
 import type { AuthorityId } from '@polkadot/types/interfaces/consensus';
 import type { CollationInfo } from '@polkadot/types/interfaces/cumulus';
+import type { CallDryRunEffects, XcmDryRunApiError, XcmDryRunEffects } from '@polkadot/types/interfaces/dryRunApi';
 import type { BlockV2, EthReceiptV3, EthTransactionStatus, TransactionV2 } from '@polkadot/types/interfaces/eth';
 import type { EvmAccount, EvmCallInfoV2, EvmCreateInfoV2 } from '@polkadot/types/interfaces/evm';
 import type { Extrinsic } from '@polkadot/types/interfaces/extrinsics';
 import type { GenesisBuildErr } from '@polkadot/types/interfaces/genesisBuilder';
 import type { OpaqueMetadata } from '@polkadot/types/interfaces/metadata';
 import type { FeeDetails, RuntimeDispatchInfo } from '@polkadot/types/interfaces/payment';
-import type { AccountId, Balance, Block, ExtrinsicInclusionMode, H160, H256, Header, Index, KeyTypeId, Permill, SlotDuration, Weight, WeightV2 } from '@polkadot/types/interfaces/runtime';
+import type { AccountId, Balance, Block, ExtrinsicInclusionMode, H160, H256, Header, Index, KeyTypeId, OriginCaller, Permill, RuntimeCall, SlotDuration, Weight, WeightV2 } from '@polkadot/types/interfaces/runtime';
 import type { RuntimeVersion } from '@polkadot/types/interfaces/state';
 import type { ApplyExtrinsicResult, DispatchError } from '@polkadot/types/interfaces/system';
 import type { TransactionSource, TransactionValidity } from '@polkadot/types/interfaces/txqueue';
+import type { VersionedMultiLocation, VersionedXcm } from '@polkadot/types/interfaces/xcm';
 import type { XcmPaymentApiError } from '@polkadot/types/interfaces/xcmPaymentApi';
-import type { XcmVersionedAssetId, XcmVersionedXcm } from '@polkadot/types/lookup';
+import type { Error } from '@polkadot/types/interfaces/xcmRuntimeApi';
+import type { XcmVersionedAssetId, XcmVersionedLocation, XcmVersionedXcm } from '@polkadot/types/lookup';
 import type { IExtrinsic, Observable } from '@polkadot/types/types';
 
 export type __AugmentedCall<ApiType extends ApiTypes> = AugmentedCall<ApiType>;
@@ -121,6 +124,21 @@ declare module '@polkadot/api-base/types/calls' {
        **/
       [key: string]: DecoratedCallBase<ApiType>;
     };
+    /** 0x91b1c8b16328eb92/1 */
+    dryRunApi: {
+      /**
+       * Dry run call
+       **/
+      dryRunCall: AugmentedCall<ApiType, (origin: OriginCaller | { System: any } | string | Uint8Array, call: RuntimeCall | IMethod | string | Uint8Array) => Observable<Result<CallDryRunEffects, XcmDryRunApiError>>>;
+      /**
+       * Dry run XCM program
+       **/
+      dryRunXcm: AugmentedCall<ApiType, (originLocation: VersionedMultiLocation | { V0: any } | { V1: any } | { V2: any } | { V3: any } | { V4: any } | string | Uint8Array, xcm: VersionedXcm | { V0: any } | { V1: any } | { V2: any } | { V3: any } | { V4: any } | string | Uint8Array) => Observable<Result<XcmDryRunEffects, XcmDryRunApiError>>>;
+      /**
+       * Generic call
+       **/
+      [key: string]: DecoratedCallBase<ApiType>;
+    };
     /** 0x582211f65bb14b89/5 */
     ethereumRuntimeRPCApi: {
       /**
@@ -194,6 +212,17 @@ declare module '@polkadot/api-base/types/calls' {
        * Creates the default `RuntimeGenesisConfig` and returns it as a JSON blob.
        **/
       createDefaultConfig: AugmentedCall<ApiType, () => Observable<Bytes>>;
+      /**
+       * Generic call
+       **/
+      [key: string]: DecoratedCallBase<ApiType>;
+    };
+    /** 0x9ffb505aa738d69c/1 */
+    locationToAccountApi: {
+      /**
+       * Converts `Location` to `AccountId`
+       **/
+      convertLocation: AugmentedCall<ApiType, (location: XcmVersionedLocation | { V2: any } | { V3: any } | { V4: any } | string | Uint8Array) => Observable<Result<AccountId, Error>>>;
       /**
        * Generic call
        **/
