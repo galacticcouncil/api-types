@@ -1,4 +1,6 @@
 // Auto-generated via `yarn polkadot-types-from-defs`, do not edit
 /* eslint-disable */
 
-export * from './voting/types.js';
+export * from "./voting/types.js";
+
+export type PHANTOM_GENERATED = "generated";
