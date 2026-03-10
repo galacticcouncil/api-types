@@ -33,11 +33,12 @@ import type {
   FrameSystemLimitsBlockWeights,
   HydradxTraitsOracleOraclePeriod,
   PalletDynamicFeesFeeParams,
-  PalletReferendaTrackInfo,
+  PalletReferendaTrackDetails,
   SpVersionRuntimeVersion,
   SpWeightsRuntimeDbWeight,
   SpWeightsWeightV2Weight,
-  StagingXcmV4Location,
+  StagingXcmV5Junctions,
+  StagingXcmV5Location,
 } from "@polkadot/types/lookup";
 
 export type __AugmentedConst<ApiType extends ApiTypes> =
@@ -146,6 +147,29 @@ declare module "@polkadot/api-base/types/consts" {
       /** Reward amount per one collator. */
       rewardPerCollator: u128 & AugmentedConst<ApiType>;
       rewardsBag: AccountId32 & AugmentedConst<ApiType>;
+      /** Generic const */
+      [key: string]: Codec;
+    };
+    collatorSelection: {
+      kickThreshold: u32 & AugmentedConst<ApiType>;
+      /**
+       * Maximum number of candidates that we should have.
+       *
+       * This does not take into account the invulnerables.
+       */
+      maxCandidates: u32 & AugmentedConst<ApiType>;
+      /** Maximum number of invulnerables. */
+      maxInvulnerables: u32 & AugmentedConst<ApiType>;
+      /**
+       * Minimum number eligible collators. Should always be greater than zero.
+       * This includes Invulnerable collators. This ensures that there will
+       * always be one collator who can produce a block.
+       */
+      minEligibleCollators: u32 & AugmentedConst<ApiType>;
+      /** Gets this pallet's derived pot account. */
+      potAccount: AccountId32 & AugmentedConst<ApiType>;
+      /** Account Identifier from which the internal Pot is generated. */
+      potId: FrameSupportPalletId & AugmentedConst<ApiType>;
       /** Generic const */
       [key: string]: Codec;
     };
@@ -282,6 +306,32 @@ declare module "@polkadot/api-base/types/consts" {
       /** Generic const */
       [key: string]: Codec;
     };
+    ethDispenser: {
+      /** Flat fee charged in `FeeAsset` for each faucet request. */
+      dispenserFee: u128 & AugmentedConst<ApiType>;
+      /** EVM address of the external gas faucet contract. */
+      faucetAddress: H160 & AugmentedConst<ApiType>;
+      /** Asset ID deducted to receive faucet on the destination chain. (WETH - 20) */
+      faucetAsset: u32 & AugmentedConst<ApiType>;
+      /** Asset ID used to charge the faucet request fee. (HDX - 0) */
+      feeAsset: u32 & AugmentedConst<ApiType>;
+      /** Account that receives the collected dispenser fees and faucet asset. */
+      feeDestination: AccountId32 & AugmentedConst<ApiType>;
+      /** Maximum amount of faucet asset that can be requested in a single call. */
+      maxDispenseAmount: u128 & AugmentedConst<ApiType>;
+      /**
+       * Minimum remaining ETH (in wei) that must be available in the faucet
+       * after servicing a request. Requests are rejected if this threshold
+       * would be breached.
+       */
+      minFaucetEthThreshold: u128 & AugmentedConst<ApiType>;
+      /** Minimum amount of faucet asset that can be requested in a single call. */
+      minimumRequestAmount: u128 & AugmentedConst<ApiType>;
+      /** Pallet ID used to derive the pallet's sovereign account. */
+      palletId: FrameSupportPalletId & AugmentedConst<ApiType>;
+      /** Generic const */
+      [key: string]: Codec;
+    };
     evmAccounts: {
       /** Fee multiplier for the binding of addresses. */
       feeMultiplier: u32 & AugmentedConst<ApiType>;
@@ -328,6 +378,16 @@ declare module "@polkadot/api-base/types/consts" {
        * is the size of an account ID plus 32 bytes.
        */
       subAccountDeposit: u128 & AugmentedConst<ApiType>;
+      /**
+       * The amount held on deposit per registered username. This value should
+       * change only in runtime upgrades with proper migration of existing deposits.
+       */
+      usernameDeposit: u128 & AugmentedConst<ApiType>;
+      /**
+       * The number of blocks that must pass to enable the permanent deletion of
+       * a username by its respective authority.
+       */
+      usernameGracePeriod: u32 & AugmentedConst<ApiType>;
       /** Generic const */
       [key: string]: Codec;
     };
@@ -393,6 +453,26 @@ declare module "@polkadot/api-base/types/consts" {
       /** Generic const */
       [key: string]: Codec;
     };
+    multiBlockMigrations: {
+      /**
+       * The maximal length of an encoded cursor.
+       *
+       * A good default needs to selected such that no migration will ever have
+       * a cursor with MEL above this limit. This is statically checked in
+       * `integrity_test`.
+       */
+      cursorMaxLen: u32 & AugmentedConst<ApiType>;
+      /**
+       * The maximal length of an encoded identifier.
+       *
+       * A good default needs to selected such that no migration will ever have
+       * an identifier with MEL above this limit. This is statically checked in
+       * `integrity_test`.
+       */
+      identifierMaxLen: u32 & AugmentedConst<ApiType>;
+      /** Generic const */
+      [key: string]: Codec;
+    };
     multisig: {
       /**
        * The base amount of currency needed to reserve for creating a multisig
@@ -431,6 +511,8 @@ declare module "@polkadot/api-base/types/consts" {
       hdxAssetId: u32 & AugmentedConst<ApiType>;
       /** Hub Asset ID */
       hubAssetId: u32 & AugmentedConst<ApiType>;
+      /** Destination account when hub asset is sold */
+      hubDestination: AccountId32 & AugmentedConst<ApiType>;
       /** Max fraction of asset reserve to sell in single transaction */
       maxInRatio: u128 & AugmentedConst<ApiType>;
       /** Max fraction of asset reserve to buy in single transaction */
@@ -511,6 +593,21 @@ declare module "@polkadot/api-base/types/consts" {
       /** Generic const */
       [key: string]: Codec;
     };
+    polkadotXcm: {
+      /**
+       * The latest supported version that we advertise. Generally just set it
+       * to `pallet_xcm::CurrentXcmVersion`.
+       */
+      advertisedXcmVersion: u32 & AugmentedConst<ApiType>;
+      /** The maximum number of local XCM locks that a single account may have. */
+      maxLockers: u32 & AugmentedConst<ApiType>;
+      /** The maximum number of consumers a single remote lock may have. */
+      maxRemoteLockConsumers: u32 & AugmentedConst<ApiType>;
+      /** This chain's Universal Location. */
+      universalLocation: StagingXcmV5Junctions & AugmentedConst<ApiType>;
+      /** Generic const */
+      [key: string]: Codec;
+    };
     proxy: {
       /**
        * The base amount of currency needed to reserve for creating an announcement.
@@ -561,8 +658,13 @@ declare module "@polkadot/api-base/types/consts" {
       maxQueued: u32 & AugmentedConst<ApiType>;
       /** The minimum amount to be used as a deposit for a public referendum proposal. */
       submissionDeposit: u128 & AugmentedConst<ApiType>;
-      /** Information concerning the different referendum tracks. */
-      tracks: Vec<ITuple<[u16, PalletReferendaTrackInfo]>> &
+      /**
+       * A list of tracks.
+       *
+       * Note: if the tracks are dynamic, the value in the static metadata might
+       * be inaccurate.
+       */
+      tracks: Vec<ITuple<[u16, PalletReferendaTrackDetails]>> &
         AugmentedConst<ApiType>;
       /**
        * The number of blocks after submission that a referendum must begin
@@ -612,6 +714,17 @@ declare module "@polkadot/api-base/types/consts" {
        *   setting. Set a higher limit under `runtime-benchmarks` feature.
        */
       maxScheduledPerBlock: u32 & AugmentedConst<ApiType>;
+      /** Generic const */
+      [key: string]: Codec;
+    };
+    signet: {
+      /** Maximum length for chain ID */
+      maxChainIdLength: u32 & AugmentedConst<ApiType>;
+      /** Maximum length of transaction data */
+      maxDataLength: u32 & AugmentedConst<ApiType>;
+      maxSignatureDeposit: u128 & AugmentedConst<ApiType>;
+      /** The pallet's unique ID for deriving its account */
+      palletId: FrameSupportPalletId & AugmentedConst<ApiType>;
       /** Generic const */
       [key: string]: Codec;
     };
@@ -733,12 +846,6 @@ declare module "@polkadot/api-base/types/consts" {
       /** Generic const */
       [key: string]: Codec;
     };
-    tokenGateway: {
-      /** The decimals of the native currency */
-      decimals: u8 & AugmentedConst<ApiType>;
-      /** Generic const */
-      [key: string]: Codec;
-    };
     tokens: {
       maxLocks: u32 & AugmentedConst<ApiType>;
       /** The maximum number of named reserves that can exist on an account. */
@@ -779,6 +886,11 @@ declare module "@polkadot/api-base/types/consts" {
       /** Percentage of spare funds (if any) that are burnt per spend period. */
       burn: Permill & AugmentedConst<ApiType>;
       /**
+       * DEPRECATED: associated with `spend_local` call and will be removed in
+       * May 2025. Refer to
+       * [https://github.com/paritytech/polkadot-sdk/pull/5961](https://github.com/paritytech/polkadot-sdk/pull/5961)
+       * for migration to `spend`.
+       *
        * The maximum number of approvals that can wait in the spending queue.
        *
        * NOTE: This parameter is also used within the Bounties Pallet extension
@@ -789,6 +901,8 @@ declare module "@polkadot/api-base/types/consts" {
       palletId: FrameSupportPalletId & AugmentedConst<ApiType>;
       /** The period during which an approved treasury spend has to be claimed. */
       payoutPeriod: u32 & AugmentedConst<ApiType>;
+      /** Gets this pallet's derived pot account. */
+      potAccount: AccountId32 & AugmentedConst<ApiType>;
       /** Period between successive spends. */
       spendPeriod: u32 & AugmentedConst<ApiType>;
       /** Generic const */
@@ -881,7 +995,7 @@ declare module "@polkadot/api-base/types/consts" {
       /** The id of the RateLimiter. */
       rateLimiterId: Null & AugmentedConst<ApiType>;
       /** Self chain location. */
-      selfLocation: StagingXcmV4Location & AugmentedConst<ApiType>;
+      selfLocation: StagingXcmV5Location & AugmentedConst<ApiType>;
       /** Generic const */
       [key: string]: Codec;
     };

@@ -15,13 +15,9 @@ import type {
   Null,
   Option,
   Result,
-  U256,
   Vec,
-  bool,
   u128,
-  u256,
   u32,
-  u64,
 } from "@polkadot/types-codec";
 import type { AnyNumber, IMethod, ITuple } from "@polkadot/types-codec/types";
 import type {
@@ -36,17 +32,7 @@ import type {
   XcmDryRunApiError,
   XcmDryRunEffects,
 } from "@polkadot/types/interfaces/dryRunApi";
-import type {
-  BlockV2,
-  EthReceiptV3,
-  EthTransactionStatus,
-  TransactionV2,
-} from "@polkadot/types/interfaces/eth";
-import type {
-  EvmAccount,
-  EvmCallInfoV2,
-  EvmCreateInfoV2,
-} from "@polkadot/types/interfaces/evm";
+import type { TransactionV2 } from "@polkadot/types/interfaces/eth";
 import type { Extrinsic } from "@polkadot/types/interfaces/extrinsics";
 import type { GenesisBuildErr } from "@polkadot/types/interfaces/genesisBuilder";
 import type { OpaqueMetadata } from "@polkadot/types/interfaces/metadata";
@@ -59,24 +45,17 @@ import type {
   Balance,
   Block,
   ExtrinsicInclusionMode,
-  H160,
-  H256,
   Header,
   Index,
   KeyTypeId,
   OriginCaller,
-  Permill,
   RuntimeCall,
-  Slot,
   SlotDuration,
   Weight,
   WeightV2,
 } from "@polkadot/types/interfaces/runtime";
 import type { RuntimeVersion } from "@polkadot/types/interfaces/state";
-import type {
-  ApplyExtrinsicResult,
-  DispatchError,
-} from "@polkadot/types/interfaces/system";
+import type { ApplyExtrinsicResult } from "@polkadot/types/interfaces/system";
 import type {
   TransactionSource,
   TransactionValidity,
@@ -116,19 +95,6 @@ declare module "@polkadot/api-base/types/calls" {
       authorities: AugmentedCall<ApiType, () => Observable<Vec<AuthorityId>>>;
       /** Returns the slot duration for Aura. */
       slotDuration: AugmentedCall<ApiType, () => Observable<SlotDuration>>;
-      /** Generic call */
-      [key: string]: DecoratedCallBase<ApiType>;
-    };
-    /** 0xd7bdd8a272ca0d65/1 */
-    auraUnincludedSegmentApi: {
-      /** Whether it is legal to extend the chain */
-      canBuildUpon: AugmentedCall<
-        ApiType,
-        (
-          includedHash: BlockHash | string | Uint8Array,
-          slot: Slot | AnyNumber | Uint8Array
-        ) => Observable<bool>
-      >;
       /** Generic call */
       [key: string]: DecoratedCallBase<ApiType>;
     };
@@ -240,14 +206,15 @@ declare module "@polkadot/api-base/types/calls" {
       /** Generic call */
       [key: string]: DecoratedCallBase<ApiType>;
     };
-    /** 0x91b1c8b16328eb92/1 */
+    /** 0x91b1c8b16328eb92/2 */
     dryRunApi: {
       /** Dry run call */
       dryRunCall: AugmentedCall<
         ApiType,
         (
           origin: OriginCaller | { System: any } | string | Uint8Array,
-          call: RuntimeCall | IMethod | string | Uint8Array
+          call: RuntimeCall | IMethod | string | Uint8Array,
+          resultXcmsVersion: u32 | AnyNumber | Uint8Array
         ) => Observable<Result<CallDryRunEffects, XcmDryRunApiError>>
       >;
       /** Dry run XCM program */
@@ -279,126 +246,6 @@ declare module "@polkadot/api-base/types/calls" {
       /** Generic call */
       [key: string]: DecoratedCallBase<ApiType>;
     };
-    /** 0x582211f65bb14b89/5 */
-    ethereumRuntimeRPCApi: {
-      /** Returns pallet_evm::Accounts by address. */
-      accountBasic: AugmentedCall<
-        ApiType,
-        (address: H160 | string | Uint8Array) => Observable<EvmAccount>
-      >;
-      /** For a given account address, returns pallet_evm::AccountCodes. */
-      accountCodeAt: AugmentedCall<
-        ApiType,
-        (address: H160 | string | Uint8Array) => Observable<Bytes>
-      >;
-      /** Returns the converted FindAuthor::find_author authority id. */
-      author: AugmentedCall<ApiType, () => Observable<H160>>;
-      /** Returns a frame_ethereum::call response. If `estimate` is true, */
-      call: AugmentedCall<
-        ApiType,
-        (
-          from: H160 | string | Uint8Array,
-          to: H160 | string | Uint8Array,
-          data: Bytes | string | Uint8Array,
-          value: U256 | AnyNumber | Uint8Array,
-          gasLimit: U256 | AnyNumber | Uint8Array,
-          maxFeePerGas: Option<U256> | null | Uint8Array | U256 | AnyNumber,
-          maxPriorityFeePerGas:
-            | Option<U256>
-            | null
-            | Uint8Array
-            | U256
-            | AnyNumber,
-          nonce: Option<U256> | null | Uint8Array | U256 | AnyNumber,
-          estimate: bool | boolean | Uint8Array,
-          accessList:
-            | Option<Vec<ITuple<[H160, Vec<H256>]>>>
-            | null
-            | Uint8Array
-            | Vec<ITuple<[H160, Vec<H256>]>>
-            | [
-                H160 | string | Uint8Array,
-                Vec<H256> | (H256 | string | Uint8Array)[]
-              ][]
-        ) => Observable<Result<EvmCallInfoV2, DispatchError>>
-      >;
-      /** Returns runtime defined pallet_evm::ChainId. */
-      chainId: AugmentedCall<ApiType, () => Observable<u64>>;
-      /** Returns a frame_ethereum::call response. If `estimate` is true, */
-      create: AugmentedCall<
-        ApiType,
-        (
-          from: H160 | string | Uint8Array,
-          data: Bytes | string | Uint8Array,
-          value: U256 | AnyNumber | Uint8Array,
-          gasLimit: U256 | AnyNumber | Uint8Array,
-          maxFeePerGas: Option<U256> | null | Uint8Array | U256 | AnyNumber,
-          maxPriorityFeePerGas:
-            | Option<U256>
-            | null
-            | Uint8Array
-            | U256
-            | AnyNumber,
-          nonce: Option<U256> | null | Uint8Array | U256 | AnyNumber,
-          estimate: bool | boolean | Uint8Array,
-          accessList:
-            | Option<Vec<ITuple<[H160, Vec<H256>]>>>
-            | null
-            | Uint8Array
-            | Vec<ITuple<[H160, Vec<H256>]>>
-            | [
-                H160 | string | Uint8Array,
-                Vec<H256> | (H256 | string | Uint8Array)[]
-              ][]
-        ) => Observable<Result<EvmCreateInfoV2, DispatchError>>
-      >;
-      /** Return all the current data for a block in a single runtime call. */
-      currentAll: AugmentedCall<
-        ApiType,
-        () => Observable<
-          ITuple<
-            [
-              Option<BlockV2>,
-              Option<Vec<EthReceiptV3>>,
-              Option<Vec<EthTransactionStatus>>
-            ]
-          >
-        >
-      >;
-      /** Return the current block. */
-      currentBlock: AugmentedCall<ApiType, () => Observable<BlockV2>>;
-      /** Return the current receipt. */
-      currentReceipts: AugmentedCall<
-        ApiType,
-        () => Observable<Option<Vec<EthReceiptV3>>>
-      >;
-      /** Return the current transaction status. */
-      currentTransactionStatuses: AugmentedCall<
-        ApiType,
-        () => Observable<Option<Vec<EthTransactionStatus>>>
-      >;
-      /** Return the elasticity multiplier. */
-      elasticity: AugmentedCall<ApiType, () => Observable<Option<Permill>>>;
-      /** Receives a `Vec<OpaqueExtrinsic>` and filters all the ethereum transactions. */
-      extrinsicFilter: AugmentedCall<
-        ApiType,
-        (
-          xts: Vec<Extrinsic> | (Extrinsic | IExtrinsic | string | Uint8Array)[]
-        ) => Observable<Vec<TransactionV2>>
-      >;
-      /** Returns FixedGasPrice::min_gas_price */
-      gasPrice: AugmentedCall<ApiType, () => Observable<u256>>;
-      /** For a given account address and index, returns pallet_evm::AccountStorages. */
-      storageAt: AugmentedCall<
-        ApiType,
-        (
-          address: H160 | string | Uint8Array,
-          index: u256 | AnyNumber | Uint8Array
-        ) => Observable<H256>
-      >;
-      /** Generic call */
-      [key: string]: DecoratedCallBase<ApiType>;
-    };
     /** 0xfbc577b9d747efd6/1 */
     genesisBuilder: {
       /**
@@ -424,9 +271,9 @@ declare module "@polkadot/api-base/types/calls" {
         (
           location:
             | XcmVersionedLocation
-            | { V2: any }
             | { V3: any }
             | { V4: any }
+            | { V5: any }
             | string
             | Uint8Array
         ) => Observable<Result<AccountId, Error>>
@@ -569,6 +416,7 @@ declare module "@polkadot/api-base/types/calls" {
             | XcmVersionedAssetId
             | { V3: any }
             | { V4: any }
+            | { V5: any }
             | string
             | Uint8Array
         ) => Observable<Result<u128, XcmPaymentApiError>>
@@ -578,9 +426,9 @@ declare module "@polkadot/api-base/types/calls" {
         (
           message:
             | XcmVersionedXcm
-            | { V2: any }
             | { V3: any }
             | { V4: any }
+            | { V5: any }
             | string
             | Uint8Array
         ) => Observable<Result<WeightV2, XcmPaymentApiError>>
